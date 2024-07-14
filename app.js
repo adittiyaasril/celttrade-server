@@ -3,9 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const http = require("http");
 const routes = require("./routes");
+const { Server } = require("socket.io");
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 
@@ -22,9 +25,31 @@ mongoose.connection.on("error", (err) => {
   console.log(`Failed to connect to MongoDB: ${err.message}`);
 });
 
-app.use(cors());
+// Ensure the server listens with http.Server
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow all origins for testing
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+
+  socket.on("chat message", (msg) => {
+    console.log("message: " + msg);
+    io.emit("chat message", msg);
+  });
+});
+
 app.use(routes);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
