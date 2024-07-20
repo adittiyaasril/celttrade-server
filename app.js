@@ -30,7 +30,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://celttrade-mall.vercel.app/",
+    origin: "https://celttrade-mall.vercel.app",
     methods: ["GET", "POST"],
   },
 });
