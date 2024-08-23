@@ -8,13 +8,7 @@ const routes = require("./routes");
 const { Server } = require("socket.io");
 
 const app = express();
-app.use(
-  cors({
-    origin: "https://celttrade-mall.vercel.app",
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+app.use(cors());
 const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 
@@ -36,9 +30,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://celttrade-mall.vercel.app",
+    origin: "*", // Allow all origins for testing
     methods: ["GET", "POST"],
-    credentials: true,
   },
 });
 
